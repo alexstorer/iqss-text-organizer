@@ -1,0 +1,41 @@
+#!/usr/bin/python
+
+import sys
+import os
+from textorganizer import add, config, select
+
+
+def parseargs(args,configuration):
+    if args[0]=='add':
+        add.process_raw_files(args[1:],configuration['dblocation'],programdir)
+    else:
+        print "Unrecognized arguments provided; entering interactive mode"
+        mainprompt(configuration)
+
+def mainprompt(configuration):
+    print "Welcome message."
+    while True:
+        #present user with a prompt, grab input, and convert to lowercase
+        instr=raw_input("> ").lower()
+        if instr == 'q' or instr == 'quit' or instr == 'exit':
+            break
+        elif instr.startswith('select '):
+            selection = select.selection(instr[7:],configuration['dblocation'])
+            print str(len(selection.selecteditems))+" files selected."
+        elif instr.startswith('export '):
+            selection.parseargs_export(instr[7:])
+        elif instr.startswith('add '):
+            #add.process_raw_files(FILENAMES,configuration['dblocation'])
+            #need a good way to get a list of filenames from the interactive prompt
+            print '\'add\' is not yet supported from the interactive prompt. Please use \'txtorg add [filename]\' from the shell.'
+        else:
+            print "Input not understood. Type 'h' or 'help' for help."
+
+if __name__ == '__main__':
+    programdir = os.path.join(os.path.dirname(__file__))
+    configuration = config.get_and_check_config(os.path.join(programdir,"textorganizer.cnf"))
+
+    if len(sys.argv) > 1:
+        parseargs(sys.argv[1:],configuration)
+    else:
+        mainprompt(configuration)
