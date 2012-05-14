@@ -33,7 +33,7 @@ def mainprompt(configuration):
 
 if __name__ == '__main__':
     programdir = os.path.join(os.path.dirname(__file__))
-    configuration = config.get_and_check_config(os.path.join(programdir,"textorganizer.cnf"))
+    configuration = config.get_and_check_config(os.path.join(programdir,"textorganizer.cnf"),programdir)
 
     if len(sys.argv) > 1:
         parseargs(sys.argv[1:],configuration)

@@ -5,14 +5,14 @@ import sqlite3
 
 
 
-def get_and_check_config(config_file_location):
-    config=read_config_file(config_file_location)
+def get_and_check_config(config_file_location,programdir):
+    config=read_config_file(config_file_location,programdir)
     while not check_db(config['dblocation']):
         print "Generating new configuration file."
-        make_config_file(config_file_location)
+        make_config_file(config_file_location,programdir)
     return config
             
-def read_config_file(config_file_location):
+def read_config_file(config_file_location,programdir):
     dblocation = None
     configuration = {}
 
@@ -26,13 +26,13 @@ def read_config_file(config_file_location):
         return configuration
     except IOError:
         print "No configuration file found; creating a new one."
-        make_config_file(config_file_location)
-        return read_config_file(config_file_location)
+        make_config_file(config_file_location,programdir)
+        return read_config_file(config_file_location,programdir)
 
 
-def make_config_file(config_file_location):
+def make_config_file(config_file_location,programdir):
 
-    dblocation = os.path.join(os.path.dirname(__file__),"textdb.sqlite")
+    dblocation = os.path.join(programdir,"textdb.sqlite")
 
     while True:
         newloc = raw_input("Please choose a location for the main database. Press ENTER to accept the default value (" + dblocation+") or type a new file path.\n> ")

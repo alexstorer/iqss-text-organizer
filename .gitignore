@@ -1,0 +1,4 @@
+*~
+*.pyc
+textdb.sqlite
+textorganizer.cnf
