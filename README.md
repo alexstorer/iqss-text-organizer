@@ -4,7 +4,7 @@ iqss-text-organizer
 A simple python-based command line tool designed to make organizing data for textual analysis easy and scalable.
 
 SETUP
-===================
+----------
 
 To use this program, clone the git repository into a directory on your computer and then add the directory to your PATH environment variable. On Linux, this means editing your .bashrc file to contain the line 
 
@@ -13,7 +13,7 @@ export PATH=/path/to/iqss-text-organizer:$PATH
 Now you can use the command 'txtorg' to run the program from anywhere on your computer. On the first run, it will prompt you for a database location.
 
 USAGE
-===================
+-----------
 
 1. Adding files to the database
 
@@ -30,17 +30,17 @@ To run iqss-text-organizer in interactive mode, you can simply run 'txtorg' from
 a) select
 
 SYNTAX:
-select tag [TAG]		selects all documents that are tagged with TAG
-*select all			selects all documents
-*select where [FIELD]=[VALUE]	selects all documents with metadata field FILED matching value VALUE
-*select containing TERM		selects all documents that contain a given word TERM
+* select tag [TAG] --- selects all documents that are tagged with TAG
+* (select all) --- selects all documents
+* (select where [FIELD]=[VALUE]) --- selects all documents with metadata field FILED matching value VALUE
+* (select containing TERM) --- selects all documents that contain a given word TERM
 
-*unsupported in version 0
+(unsupported in version 0)
 
 b) export
 
 SYNTAX:
-export files			exports the full text of all selected documents to a directory
-*export tdm			exports a term-document matrix for all selected documents to a file
+* export files --- exports the full text of all selected documents to a directory
+* (export tdm) --- exports a term-document matrix for all selected documents to a file
 
-*unsupported in version 0
+(unsupported in version 0)
