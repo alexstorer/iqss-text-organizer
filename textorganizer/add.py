@@ -21,7 +21,7 @@ def process_raw_files(filenames,dblocation,programdir):
     '''Now prompt for metadata. prompt_for_metadata() returns metadata in the form of key-value pairs and tags'''
     metadata_pairs, tags = prompt_for_metadata()
 
-    '''set the language to be English, for now'''
+    '''set the language to be English, for now. Chinese works too (just change 'en' to 'zh'), but right now there is no way to determine which language a document is in. '''
     language = 'en'
 
     '''finally, add to the database'''
@@ -39,12 +39,16 @@ def filter_filenames(filenames):
     return good_filenames
 
 def add_to_db(filenames,dblocation,md_pairs,tags,language):
+
     conn=sqlite3.connect(dblocation)
     c=conn.cursor()
 
     '''add new metadata categories to the FILES table, and construct INSERT statement'''
     namestring = ""
     valuestring= ""
+
+    # this is completely vulnerable to shell injection, and bad style. Instead of constructing sql statements like I've done, we should be using parameter substitution. However, I could not get it to work properly so I did this for now.
+
     for pair in md_pairs:
 
         namestring += (', '+pair[0])
@@ -149,6 +153,7 @@ def make_TDM(filename,language):
             with codecs.open(dictpath,'r',encoding='UTF-8') as inf:
                 for line in inf:
                     dictionary[line.lower().strip()] = True
+            dictionary['LANGCODE1']=language
         except:
             print 'Could not find dictionary file at '+dictpath+'. Aborting.'
             return None

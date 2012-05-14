@@ -75,7 +75,7 @@ class selection():
 
         filepaths = []
         for pkid in self.selecteditems:
-            c.execute("SELECT filepath FROM FILES WHERE pkid=:id",{'id': pkid})
-            filepaths.append(c.fetchone()[0])
+            pass
+#NEED TO FIND A GOOD SQL COMMAND TO CREATE A TDM
         
         conn.close()
