@@ -14,6 +14,8 @@ class selection():
             return self.select_tags(selectstring[4:])
         elif selectstring.startswith('where '):
             return self.select_complex(selectstring[6:])
+        elif selectstring.startswith('containing '):
+            return self.select_containing(selectstring[11:])
         else:
             print 'Invalid selection.'
             return []
@@ -21,12 +23,70 @@ class selection():
     def select_tags(self,tagstring):
         conn=sqlite3.connect(self.dblocation)
         c=conn.cursor()
-
-        c.execute("SELECT pkid FROM FILES INNER JOIN TAGS on FILES.pkid=TAGS.file_id where TAGS.tag=:tag",{'tag':tagstring})
-        allpkids=[row[0] for row in c]
+        try:
+            c.execute("SELECT pkid FROM FILES INNER JOIN TAGS on FILES.pkid=TAGS.file_id where TAGS.tag=:tag",{'tag':tagstring})
+            allpkids=[row[0] for row in c]
+        except:
+            print "Invalid Selection."
+            allpkids = []
         conn.close()
         return allpkids
 
+    def select_all(self):
+        conn=sqlite3.connect(self.dblocation)
+        c=conn.cursor()
+
+        try:
+            c.execute("SELECT pkid FROM FILES")
+            allpkids=[row[0] for row in c]
+        except:
+            print "Invalid Selection."
+            allpkids = []
+        conn.close()
+        return allpkids
+
+    def select_containing(self,selectstring):
+        conn=sqlite3.connect(self.dblocation)
+        c=conn.cursor()
+
+        try:
+            c.execute("select distinct pkid from FILES INNER JOIN NGRAMS on pkid = file_id where ngram=:searchstr",{'searchstr':selectstring})
+            allpkids=[row[0] for row in c]
+        except:
+            print "Invalid Selection."
+            allpkids = []
+        conn.close()
+        return allpkids
+    
+    def select_complex(self,sqlstring):
+        conn=sqlite3.connect(self.dblocation)
+        c=conn.cursor()
+
+        #again, this is super vulnerable to SQL injection, but it allows the user to use custom SQL
+        try:
+            c.execute("SELECT pkid FROM FILES where "+sqlstring)
+            allpkids=[row[0] for row in c]
+        except:
+            print "Invalid Selection."
+            allpkids = []
+        conn.close()
+        return allpkids
+
+    def parseargs_view(self,viewstring):
+        if viewstring.startswith('tags'):
+            return self.get_all_tags()
+        elif viewstring.startswith('fields'):
+            return self.get_all_fields()
+
+    def get_all_tags(self):
+        conn=sqlite3.connect(self.dblocation)
+        c=conn.cursor()
+
+        c.execute("SELECT DISTINCT tag FROM FILES")
+        alltags=[row[0] for row in c]
+
+        conn.close()
+        return alltags
 
     def parseargs_export(self,exportstring):
         if exportstring.startswith('files'):

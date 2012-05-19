@@ -2,7 +2,7 @@
 
 import sys
 import os
-from textorganizer import add, config, select
+from textorganizer import add, config, select, view
 
 
 def parseargs(args,configuration):
@@ -24,6 +24,8 @@ def mainprompt(configuration):
             print str(len(selection.selecteditems))+" files selected."
         elif instr.startswith('export '):
             selection.parseargs_export(instr[7:])
+        elif instr.startswith('view '):
+            viewdb = view.viewdb(instr[5:],configuration['dblocation'])
         elif instr.startswith('add '):
             #add.process_raw_files(FILENAMES,configuration['dblocation'])
             #need a good way to get a list of filenames from the interactive prompt

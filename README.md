@@ -25,17 +25,15 @@ In addition to metadata, you can add a simple (comma-separated) list of tags to 
 
 2. Selecting and exporting files
 
-To run iqss-text-organizer in interactive mode, you can simply run 'txtorg' from the command line. At the prompt (> ), you can choose how to subset the data and what to do with the subsetted data. Current supported commands are 'select', 'export' and 'quit'.
+To run iqss-text-organizer in interactive mode, you can simply run 'txtorg' from the command line. At the prompt (> ), you can choose how to subset the data and what to do with the subsetted data. Current supported commands are 'select', 'export', 'view', and 'quit'.
 
 a) select
 
 SYNTAX:
 * select tag [TAG] --- selects all documents that are tagged with TAG
-* (select all) --- selects all documents
-* (select where [FIELD]=[VALUE]) --- selects all documents with metadata field FILED matching value VALUE
-* (select containing TERM) --- selects all documents that contain a given word TERM
-
-(unsupported in version 0)
+* select all --- selects all documents
+* select where [FIELD] [=|<|>|!=] [VALUE] [and|or] [FIELD] [=|<|>|!=] [VALUE] [...] --- selects all documents with metadata field FIELD matching value VALUE. Uses SQL syntax, so you can write commands like "select where language = 'english'" or "select where year > 2008". Note that text values must be enclosed in single or double quotes.
+* select containing TERM --- selects all documents that contain a given word TERM. This does not work with words containing non-latin characters.
 
 b) export
 
@@ -43,4 +41,9 @@ SYNTAX:
 * export files --- exports the full text of all selected documents to a directory
 * (export tdm) --- exports a term-document matrix for all selected documents to a file
 
+c) view
+
+SYNTAX:
+* view tags --- shows a list of all tags used in the database
+* view fields --- shows a list of all metadata fields defined in the database
 (unsupported in version 0)

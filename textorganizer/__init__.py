@@ -1,1 +1,1 @@
-__all__ = ["add", "config"]
+__all__ = ["add", "config","select","view"]
