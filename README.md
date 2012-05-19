@@ -39,11 +39,12 @@ b) export
 
 SYNTAX:
 * export files --- exports the full text of all selected documents to a directory
-* (export tdm) --- exports a term-document matrix for all selected documents to a file
+* (export tdm) --- exports a term-document matrix for all selected documents to a file (unsupported in version 0)
+
 
 c) view
 
 SYNTAX:
 * view tags --- shows a list of all tags used in the database
 * view fields --- shows a list of all metadata fields defined in the database
-(unsupported in version 0)
+
