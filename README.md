@@ -10,7 +10,7 @@ To use this program, clone the git repository into a directory on your computer 
 
 export PATH=/path/to/iqss-text-organizer:$PATH
 
-Now you can use the command 'txtorg' to run the program from anywhere on your computer. On the first run, it will prompt you for a database location.
+Now you can use the command `txtorg` to run the program from anywhere on your computer. On the first run, it will prompt you for a database location.
 
 USAGE
 -----------
