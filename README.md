@@ -17,11 +17,13 @@ USAGE
 
 1. Adding files to the database
 
-From anywhere on your computer, you can run the command `txtorg add [FILE]` to add a file or files to the database. You can use standard paths to specify files; for example, running `txtorg add ./*.txt` would import all files with suffix `.txt` in the current directory.
+From anywhere on your computer, you can run the command `txtorg -a [FILE]` to add a file or files to the database. You can use standard paths to specify files; for example, running `txtorg -a ./*.txt` would import all files with suffix `.txt` in the current directory.
 
-When you run `txtorg add`, the program will prompt you for metadata and tags pertaining to the imported files. For example, if you were importing a batch of New York Times articles from year 2008, you could type `source, year` when asked for metadata field names, and then type `New York Times` and `2008` when asked to specify values. 
+When you run `txtorg -a`, the program will prompt you for metadata and tags pertaining to the imported files. For example, if you were importing a batch of New York Times articles from year 2008, you could type `source, year` when asked for metadata field names, and then type `New York Times` and `2008` when asked to specify values. 
 
 In addition to metadata, you can add a simple (comma-separated) list of tags to each batch of files when prompted.
+
+To allow for more complex metadata and tagging, the text organizer has a second import mode that reads filenames, metadata values, and tags from a user-supplied CSV file. The syntax for this mode is `txtorg -c [FILE]`, where FILE is a CSV file. The CSV file should be in the same format as sample_csv.csv.
 
 2. Selecting and exporting files
 

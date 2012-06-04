@@ -1,0 +1,5 @@
+FILEPATH,SOURCE,LANGUAGE,TAGS
+1987/01/01/0000000.xml, New York Times, English, "1987, NYtimes, test data"
+1987/01/01/0000001.xml, New York Times, English, "1987, NYtimes, test data, another tag"
+1987/01/01/0000002.xml, New York Times, English, "1987, test data 2, another tag, yet another tag"
+1987/01/01/0000007.xml, New York Times, English, "1987, NYtimes, test data 2"
