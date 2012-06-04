@@ -1,15 +1,43 @@
 #!/usr/bin/python
 
+import clint
 import sys
 import os
 from textorganizer import add, config, select, view
 
 
-def parseargs(args,configuration):
-    if args[0]=='add':
-        add.process_raw_files(args[1:],configuration['dblocation'],programdir)
+def parseargs(grouped_args,configuration):
+    
+    if '-c' in grouped_args:
+        if len(grouped_args['-c']) == 0:
+            print '-c flag passed, but no CSV file given. Ignoring -c flag'
+            use_csv = False
+        elif len(grouped_args['-c']) > 1:
+            print 'Only one CSV metadata file can be passed. Ignoring -c flag'
+            use_csv = False
+        else:
+            use_csv = True
+            csv_file = grouped_args['-c'][0]
     else:
-        print "Unrecognized arguments provided; entering interactive mode"
+        use_csv = False
+
+    if '-a' in grouped_args:
+        if len(grouped_args['-a']) == 0:
+            print 'Add_files flag passed, but no files given. Ignoring -a flag'
+            add_files = False
+        else:
+            if use_csv: print 'Only one adding mode (-a or -c) may be used at one time. Reverting to interactive mode'
+            add_files = True
+    else:
+        add_files = False
+
+    if add_files and use_csv:
+        mainprompt(configuration)
+    elif add_files:
+        add.process_raw_files_interactive(grouped_args['-a'][:],configuration)
+    elif use_csv:
+        add.process_raw_files_with_metadata_file(csv_file,configuration)
+    else:
         mainprompt(configuration)
 
 def mainprompt(configuration):
@@ -36,8 +64,6 @@ def mainprompt(configuration):
 if __name__ == '__main__':
     programdir = os.path.join(os.path.dirname(__file__))
     configuration = config.get_and_check_config(os.path.join(programdir,"textorganizer.cnf"),programdir)
+    configuration['programdir'] = programdir
 
-    if len(sys.argv) > 1:
-        parseargs(sys.argv[1:],configuration)
-    else:
-        mainprompt(configuration)
+    parseargs(clint.args.grouped,configuration)

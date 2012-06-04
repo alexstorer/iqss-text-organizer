@@ -3,15 +3,17 @@
 import codecs
 import os
 import sqlite3
+import csv
 
-def process_raw_files(filenames,dblocation,programdir):
+def process_raw_files_interactive(filenames,configuration):
     #Define a list of unicode characters to be ignored in the term-document matrix
     global ignored_characters_dict
     global program_directory
     global dictionary
     
     ignored_characters_dict = dict.fromkeys(map(ord, './!@#$%^&*()<>“”;:"+*,'), None)
-    program_directory = programdir
+    program_directory = configuration['programdir']
+    dblocation = configuration['dblocation']
     dictionary = {}
 
     '''first, get a list of all absolute paths to files containing text data'''
@@ -31,12 +33,96 @@ def process_raw_files(filenames,dblocation,programdir):
     else:
         print "Error adding files to database."
 
+def process_raw_files_with_metadata_file(csv_filepath,configuration):
+    global ignored_characters_dict
+    global program_directory
+    global dictionary
+    
+    ignored_characters_dict = dict.fromkeys(map(ord, './!@#$%^&*()<>“”;:"+*,'), None)
+    program_directory = configuration['programdir']
+    dblocation = configuration['dblocation']
+    dictionary = {}
+
+    csv_reader = csv.reader(codecs.open(csv_filepath,'r',encoding='UTF-8'), delimiter=',', quotechar='"', skipinitialspace=True)
+
+    good_filenames = []
+    md_values = []
+    tags = []
+    language = []
+
+    for idx,row in enumerate(csv_reader):
+        if idx == 0:
+            #number of fields = number of columns in CSV file minus filepath and TAGS column
+            csv_fields = row[1:-1]
+        else:
+            expanded_path = check_file(row[0])
+            if expanded_path:
+                good_filenames.append(expanded_path)
+                md_values.append(row[1:-1])
+                tags.append([x.strip() for x in row[-1].split(',')])
+                #for now, default to English for each document
+                language.append('en')
+
+    if add_to_db2(good_filenames,dblocation,csv_fields,md_values,tags,language):
+        print "Successfully added "+str(len(good_filenames))+" entries to database."
+    else:
+        print "Error adding files to database."
+
 def filter_filenames(filenames):
     good_filenames = []
     for filename in filenames:
         expanded_path = check_file(filename)
         if expanded_path: good_filenames.append(expanded_path)
     return good_filenames
+
+def add_to_db2(filenames,dblocation,md_fieldnames,md_values,tags,language):
+
+    conn=sqlite3.connect(dblocation)
+    c=conn.cursor()
+
+    '''add new metadata categories to the FILES table'''
+    for name in md_fieldnames:
+        try:
+            c.execute("ALTER TABLE FILES ADD COLUMN "+name+" TEXT")
+            print "Added column "+name+" to FILES table"
+        except sqlite3.OperationalError:
+            print "Column "+name+" is already in FILES table"
+
+    namestring = "', '".join(md_fieldnames)
+    if namestring != '': namestring = ", '"+namestring+"'"
+
+    '''Now add each filename to database'''
+    for idx,path in enumerate(filenames):
+        #add filepath to FILES table with metadata
+
+        valuestring = "', '".join(md_values[idx])
+        if valuestring != '': valuestring = ", '"+valuestring+"'"
+
+        sqlstr = 'INSERT INTO FILES (filepath'+namestring+') VALUES (\''+path+'\''+valuestring+')'
+
+        c.execute(sqlstr)
+        c.execute('SELECT max(rowid) FROM FILES')
+        maxid = c.fetchone()[0]
+        
+        for tag in tags[idx]:
+            if tag == '': continue
+            t={'id':maxid,'tag':tag}
+            c.execute("INSERT INTO tags VALUES (:id,:tag)",t)
+        
+        #compute TDM
+        TDM_dict = make_TDM(path,language[idx])
+        if TDM_dict is None:
+            print 'Error encountered: rolling back database'
+            conn.rollback()
+            return False
+        for key in TDM_dict:
+            t={'id':maxid,'term':key,'count':TDM_dict[key]}
+            c.execute("INSERT INTO NGRAMS VALUES (:id,:term,:count)",t)
+        
+        #print "Added entry "+str(maxid)+" to database."
+    conn.commit()
+    conn.close()
+    return True
 
 def add_to_db(filenames,dblocation,md_pairs,tags,language):
 
@@ -86,7 +172,6 @@ def add_to_db(filenames,dblocation,md_pairs,tags,language):
     conn.commit()
     conn.close()
     return True
-    
 
 def get_legal_input(prompt):
     while True:
