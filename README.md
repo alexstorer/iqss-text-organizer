@@ -1,7 +1,10 @@
 iqss-text-organizer
 ===================
 
-A simple python-based command line tool designed to make organizing data for textual analysis easy and scalable.
+A simple python-based command line tool designed to make organizing data for textual analysis easy and scalable. Creates
+a SQL database to which documents can be uploaded. THe user can select documents on 1) metadata or 2) ngrams contained
+within the document. Selected documents can be exported in their original format or as a TDM (TDM functionality not
+yet supported). 
 
 SETUP
 ----------
