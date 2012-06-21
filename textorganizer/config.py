@@ -91,6 +91,7 @@ def check_db(dblocation):
         print "No NGRAMS table found; creating one."
 
         c.execute('CREATE TABLE NGRAMS (file_id INTEGER, ngram TEXT, count INTEGER)')
+	c.execute('CREATE INDEX NGRAMS_index ON NGRAMS (ngram)')
         conn.commit()
 
     conn.close()

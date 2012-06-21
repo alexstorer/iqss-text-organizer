@@ -26,6 +26,8 @@ class selection():
         try:
             c.execute("SELECT pkid FROM FILES INNER JOIN TAGS on FILES.pkid=TAGS.file_id where TAGS.tag=:tag",{'tag':tagstring})
             allpkids=[row[0] for row in c]
+            self.select_type = 'tag'
+            self.tdm_select_string = "SELECT NGRAMS.file_id,NGRAMS.ngram,NGRAMS.count FROM NGRAMS INNER JOIN TAGS ON NGRAMS.file_id=TAGS.file_id WHERE TAGS.tag=\'"+tagstring+"\'"
         except:
             print "Invalid Selection."
             allpkids = []
@@ -133,9 +135,17 @@ class selection():
         conn=sqlite3.connect(self.dblocation)
         c=conn.cursor()
 
-        filepaths = []
-        for pkid in self.selecteditems:
-            pass
-#NEED TO FIND A GOOD SQL COMMAND TO CREATE A TDM
-        
+        print "Reading TDM from database..."
+        terms = []
+        for row in c.execute(self.tdm_select_string):
+            terms.append(row)
         conn.close()
+
+        print "Converting to sparse matrix format..."
+        term_dict = {}
+        for row in terms:
+            term_dict[row[1]] = term_dict.get(row[1],[]) + [(row[0],row[2])]
+
+        print len(term_dict), term_dict[u'1986']
+
+        return 

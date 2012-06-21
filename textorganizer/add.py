@@ -53,17 +53,19 @@ def process_raw_files_with_metadata_file(csv_filepath,configuration):
     for idx,row in enumerate(csv_reader):
         if idx == 0:
             #number of fields = number of columns in CSV file minus filepath and TAGS column
-            csv_fields = row[1:-1]
+            csv_fields = row[:]
+            md_fieldnames = filter(lambda z: z.lower() not in ['tags','filepath'],csv_fields)
+            tag_field = [x.lower() for x in csv_fields].index('tags')
         else:
             expanded_path = check_file(row[0])
             if expanded_path:
                 good_filenames.append(expanded_path)
-                md_values.append(row[1:-1])
-                tags.append([x.strip() for x in row[-1].split(',')])
+                md_values.append([row[y] for y in range(len(csv_fields)) if y != tag_field and y != 0])
+                tags.append([x.strip() for x in row[tag_field].split(',')])
                 #for now, default to English for each document
                 language.append('en')
 
-    if add_to_db2(good_filenames,dblocation,csv_fields,md_values,tags,language):
+    if add_to_db2(good_filenames,dblocation,md_fieldnames,md_values,tags,language):
         print "Successfully added "+str(len(good_filenames))+" entries to database."
     else:
         print "Error adding files to database."
@@ -92,6 +94,7 @@ def add_to_db2(filenames,dblocation,md_fieldnames,md_values,tags,language):
     if namestring != '': namestring = ", '"+namestring+"'"
 
     '''Now add each filename to database'''
+    print "Adding files to database..."
     for idx,path in enumerate(filenames):
         #add filepath to FILES table with metadata
 
@@ -232,7 +235,6 @@ def make_TDM(filename,language):
 
     #if the active dictionary is either not loaded, or is the wrong language, then reload it.
     if dictionary.get('LANGCODE1','')!=language:
-        print 'Loading dictionary for language \''+language+'\''
         dictpath = os.path.join(program_directory,'dict-'+language+'.txt')
         try:
             with codecs.open(dictpath,'r',encoding='UTF-8') as inf:
