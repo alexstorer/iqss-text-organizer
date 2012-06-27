@@ -15,6 +15,9 @@ export PATH=/path/to/iqss-text-organizer:$PATH
 
 Now you can use the command `txtorg` to run the program from anywhere on your computer. On the first run, it will prompt you for a database location.
 
+To use PyLucene, please see the installation instructions here:
+http://lucene.apache.org/pylucene/install.html
+
 USAGE
 -----------
 
